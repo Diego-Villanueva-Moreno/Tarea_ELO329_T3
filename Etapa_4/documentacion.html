@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentación Tarea 3 - ELO329</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background-color: #f9f9f9;
+        }
+        .container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1 { color: #004a8f; text-align: center; border-bottom: 2px solid #004a8f; padding-bottom: 10px;}
+        h2 { color: #0056b3; margin-top: 30px;}
+        .integrantes { background-color: #e9f5ff; padding: 15px; border-radius: 5px; margin-bottom: 20px;}
+        .diagram-container { text-align: center; margin-top: 40px; overflow-x: auto; }
+    </style>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: true, theme: 'default' });
+    </script>
+</head>
+<body>
+
+<div class="container">
+    <h1>Documentación Tarea 3</h1>
+    <p style="text-align: center;"><strong>Simulador Gráfico en C++ y Qt de EloTelTags y Aplicación Find My</strong></p>
+
+    <div class="integrantes">
+        <strong>Equipo de Trabajo:</strong>
+        <ul>
+            <li>Eduardo Canales</li>
+            <li>Martin Layseca</li>
+            <li>Diego Villanueva</li>
+            <li>Joaquin Torres</li>
+        </ul>
+    </div>
+
+    <h2>1. Descripción del Proyecto</h2>
+    <p>El presente proyecto implementa un simulador gráfico desarrollado en C++ y Qt que emula la interacción entre dispositivos de rastreo (EloTelTags), celulares y tablets dentro de un territorio confinado. La ejecución del software está guiada por el paradigma de programación conducida por eventos, utilizando las herramientas nativas de Qt para la interfaz y gestión del tiempo real.</p>
+
+    <h2>2. Desarrollo Iterativo e Incremental</h2>
+    <ul>
+        <li><strong>Etapa 1:</strong> Lectura base del archivo de configuración utilizando <code>QFileDialog</code>, instanciando los objetos <code>Cellular</code> y sus vistas.</li>
+        <li><strong>Etapa 2:</strong> Integración de las clases <code>EloTelTag</code> y <code>Tablet</code>, implementando el motor de simulación para el movimiento y rebote en los límites del mapa.</li>
+        <li><strong>Etapa 3:</strong> Incorporación de la clase <code>ETNube</code>. Se implementó la lógica de radares de búsqueda, permitiendo a los Tags y Tablets detectar celulares cercanos y reportar su ubicación mediante menús emergentes estáticos.</li>
+        <li><strong>Etapa 4:</strong> Integración de control de tiempo (Play y Pause). La ventana de rastreo (Find My) fue refactorizada para actualizar datos en tiempo real cada 1 segundo. Se incluyó el dibujado dinámico de trayectorias (Traza).</li>
+        <li><strong>Extra-crédito (GFindMy):</strong> Representación gráfica en una ventana independiente que actualiza cada 1 segundo las posiciones registradas en la nube para un usuario específico.</li>
+    </ul>
+
+    <h2>3. Instrucciones de Ejecución</h2>
+    <ol>
+        <li>Abra una terminal de comandos en la raíz de la carpeta <code>Etapa_4</code>.</li>
+        <li>Ejecute el comando <code>make</code> (o <code>mingw32-make</code>) para compilar el proyecto usando el Makefile provisto.</li>
+        <li>Ejecute <code>make run</code> para iniciar la simulación.</li>
+        <li>En la ventana de diálogo, seleccione el archivo <code>confix.txt</code> ubicado en la carpeta <code>config/</code>. Asegúrese de que la imagen del mapa referenciada en la primera línea esté en ese mismo directorio.</li>
+    </ol>
+
+    <h2>4. Diagrama de Clases</h2>
+    <p>A continuación se presenta el diagrama de clases del sistema final, exponiendo las relaciones de herencia y dependencia:</p>
+
+    <div class="diagram-container">
+        <pre class="mermaid">
+        classDiagram
+            %% Relaciones de Herencia
+            Equipo <|-- Cellular
+            Equipo <|-- EloTelTag
+            Equipo <|-- Tablet
+
+            %% Agregación: Territory contiene los dispositivos
+            Territory o-- Cellular
+            Territory o-- EloTelTag
+            Territory o-- Tablet
+            Territory *-- ETNube
+
+            %% Dependencias de Vistas
+            TerritoryView ..> Territory : usa
+            TerritoryView ..> CellularView : dibuja
+            TerritoryView ..> EloTelTagView : dibuja
+            TerritoryView ..> TabletView : dibuja
+
+            %% Dependencias de las Ventanas de la Etapa 4
+            TerritoryView ..> FindMyWindow : instancia
+            TerritoryView ..> GFindMyWindow : instancia
+            FindMyWindow ..> ETNube : consulta
+            GFindMyWindow ..> ETNube : consulta
+
+            %% Definición exacta de clases según los .h
+            class Equipo {
+                #QString nombre
+                #double x
+                #double y
+                #double rapidez
+                #double angulo
+                #double deltaAngulo
+                +Equipo(QString nombre, double x, double y, double rapidez, double angulo, double deltaAngulo)
+                +getNombre() QString
+                +getX() double
+                +getY() double
+                +mover(double dt, int anchoMapa, int altoMapa) void
+            }
+
+            class Cellular {
+                -QString dueno
+                +Cellular(QString dueno, double x, double y, double rapidez, double angulo, double deltaAngulo)
+                +getDueno() QString
+            }
+
+            class EloTelTag {
+                -QString dueno
+                +EloTelTag(QString nombreTag, QString dueno, double x, double y, double rapidez, double angulo, double deltaAngulo)
+                +getDueno() QString
+            }
+
+            class Tablet {
+                -QString dueno
+                +Tablet(QString dueno, double x, double y, double rapidez, double angulo, double deltaAngulo)
+                +getDueno() QString
+            }
+
+            class ETNube {
+                -QMap reportesPorEquipo
+                +reportarPosicion(QString nombreEquipo, QString dueno, QPointF posicionReportada, QString reportadoPor, double tiempoSimulacion) void
+                +reportesPorDueno(QString dueno) QVector
+            }
+
+            class Territory {
+                -double deltaTime
+                -QString rutaImagen
+                +moverTodos(int ancho, int alto) void
+                +addCellular(Cellular* cel) void
+                +addTag(EloTelTag* tag) void
+                +addTablet(Tablet* tablet) void
+            }
+
+            class TerritoryView {
+                -QTimer reloj
+                -double tiempoSimulacion
+                +playSimulation() void
+                +pauseSimulation() void
+                #paintEvent(QPaintEvent* event) void
+                #mousePressEvent(QMouseEvent* event) void
+            }
+
+            class FindMyWindow {
+                -QTimer timer
+                -QString m_dueno
+                -ETNube* m_nube
+                -actualizarDatos() void
+            }
+
+            class GFindMyWindow {
+                -QTimer m_timer
+                -QString m_dueno
+                -ETNube* m_nube
+                -QPixmap m_fondo
+                #paintEvent(QPaintEvent* event) void
+            }
+        </pre>
+    </div>
+</div>
+
+</body>
+</html>
