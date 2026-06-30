@@ -4,7 +4,7 @@
 El presente proyecto implementa un simulador gráfico desarrollado en C++ y Qt que emula la interacción entre dispositivos de rastreo (EloTelTags), celulares y tablets dentro de un territorio confinado. La ejecución del software está guiada por el paradigma de programación conducida por eventos, utilizando las herramientas nativas de Qt para la interfaz y la gestión del tiempo real.
 
 ## Equipo de Trabajo
-* Eduardo Canales - rol: 
+* Eduardo Canales - rol: 202330524-3
 * Martin Layseca - rol: 202330556-1
 * Diego Villanueva - rol: 202330558-8
 * Joaquin Torres - rol:
