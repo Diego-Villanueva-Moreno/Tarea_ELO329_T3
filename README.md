@@ -7,7 +7,7 @@ El presente proyecto implementa un simulador gráfico desarrollado en C++ y Qt q
 * Eduardo Canales - rol: 202330524-3
 * Martin Layseca - rol: 202330556-1
 * Diego Villanueva - rol: 202330558-8
-* Joaquin Torres - rol:
+* Joaquin Torres - rol: 202330550-2
 
 ## Instrucciones de Ejecución
 Para compilar y ejecutar el simulador, sigue estos pasos:
